@@ -10,6 +10,8 @@ export async function POST(request: Request) {
       email: body.email,
     },
   });
+  console.log("Email reçu :", body.email);
+console.log("Admin trouvé :", admin);
 
   if (!admin) {
     return Response.json(
@@ -22,7 +24,7 @@ export async function POST(request: Request) {
     body.password,
     admin.password
   );
-
+console.log("Mot de passe OK :", ok);
   if (!ok) {
     return Response.json(
       { error: "Email ou mot de passe incorrect." },
