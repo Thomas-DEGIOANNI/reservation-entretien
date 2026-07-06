@@ -5,11 +5,13 @@ import { cookies } from "next/headers";
 export async function POST(request: Request) {
   const body = await request.json();
 
-  const admin = await prisma.admin.findUnique({
-    where: {
-      email: body.email,
-    },
-  });
+  const admins = await prisma.admin.findMany();
+
+console.log(admins);
+
+const admin = admins.find(
+  (a) => a.email === body.email
+);
   console.log("Email reçu :", body.email);
 console.log("Admin trouvé :", admin);
 
