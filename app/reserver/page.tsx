@@ -1,5 +1,5 @@
 "use client";
-
+import ReservationPopup from "@/components/ReservationPopup";
 import { useEffect, useState } from "react";
 
 export default function ReservationPage() {
@@ -14,12 +14,17 @@ const [telephone, setTelephone] = useState("");
       const response = await fetch("/api/reservation");
       const data = await response.json();
 
-      const disponibles = data.filter(
-        (reservation: any) =>
-          reservation.type === "disponible" &&
-          reservation.status === "disponible"
-      );
-
+      const disponibles = data
+  .filter(
+    (reservation: any) =>
+      reservation.type === "disponible" &&
+      reservation.status === "disponible"
+  )
+  .sort(
+    (a: any, b: any) =>
+      new Date(a.start).getTime() -
+      new Date(b.start).getTime()
+  );
       setReservations(disponibles);
     }
 
@@ -59,58 +64,19 @@ const [telephone, setTelephone] = useState("");
           </div>
         ))
       )}
-      {selectedReservation && (
-  <div
-    style={{
-      marginTop: "40px",
-      padding: "20px",
-      border: "2px solid #2563eb",
-      borderRadius: "10px",
-    }}
-  >
-    <h2>Créneau sélectionné</h2>
-
-    <p>
-      <strong>Date :</strong>{" "}
-      {new Date(selectedReservation.start).toLocaleString("fr-FR")}
-    </p>
-
-    <div style={{ marginTop: "20px" }}>
-
-  <input
-    placeholder="Nom"
-    value={nom}
-    onChange={(e) => setNom(e.target.value)}
-    style={{ display: "block", marginBottom: "10px", width: "300px", padding: "8px" }}
-  />
-
-  <input
-    placeholder="Prénom"
-    value={prenom}
-    onChange={(e) => setPrenom(e.target.value)}
-    style={{ display: "block", marginBottom: "10px", width: "300px", padding: "8px" }}
-  />
-
-  <input
-    placeholder="Email"
-    value={email}
-    onChange={(e) => setEmail(e.target.value)}
-    style={{ display: "block", marginBottom: "10px", width: "300px", padding: "8px" }}
-  />
-
-  <input
-    placeholder="Téléphone"
-    value={telephone}
-    onChange={(e) => setTelephone(e.target.value)}
-    style={{ display: "block", marginBottom: "20px", width: "300px", padding: "8px" }}
-  />
-
-  <button
-  style={{
-    padding: "10px 20px",
-    cursor: "pointer",
-  }}
-  onClick={async () => {
+<ReservationPopup
+  open={selectedReservation !== null}
+  onClose={() => setSelectedReservation(null)}
+  reservation={selectedReservation}
+  nom={nom}
+  prenom={prenom}
+  email={email}
+  telephone={telephone}
+  setNom={setNom}
+  setPrenom={setPrenom}
+  setEmail={setEmail}
+  setTelephone={setTelephone}
+  onConfirm={async () => {
     const response = await fetch("/api/reservation/book", {
       method: "PUT",
       headers: {
@@ -146,13 +112,8 @@ const [telephone, setTelephone] = useState("");
     setEmail("");
     setTelephone("");
   }}
->
-  Confirmer la réservation
-</button>
-
-</div>
-  </div>
-)}
+/>
+<div>TEST POPUP</div>
     </main>
   );
 }
